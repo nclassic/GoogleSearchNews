@@ -28,6 +28,23 @@ export default class ResultPage extends React.Component {
   handleKeyUp = (event) => {
     this.setState({ keyword: event.target.value });
   };
+  handleSearch = (event) => {
+    let config = {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    };
+    axios
+      .get(
+        `https://serpapi.com/search.json?engine=google&q=${this.state.keyword}&api_key=35acacb8a9b9f679f9c9bcffdae6d19169b1ffe617b1aa9239001c5f98eaf1f1`,
+        config
+      )
+      .then((res) => {
+        const apiData = res.data;
+        console.log(apiData);
+        this.setState({ results: apiData.organic_results });
+      });
+  };
 
   componentDidMount() {
     const keyword = this.props.match.params.keyword;
@@ -45,7 +62,7 @@ export default class ResultPage extends React.Component {
       .then((res) => {
         const apiData = res.data;
         console.log(apiData);
-        this.setState({ results: apiData });
+        this.setState({ results: apiData.organic_results });
       });
   }
 
@@ -75,7 +92,8 @@ export default class ResultPage extends React.Component {
                     <InputGroupAddon addonType='append'>
                       <Link
                         to={"/result/" + this.state.keyword}
-                        className='search-button'>
+                        className='search-button'
+                        onClick={this.handleSearch}>
                         {" "}
                         Search Now{" "}
                       </Link>
@@ -92,17 +110,14 @@ export default class ResultPage extends React.Component {
                   paddingBottom: 10 + "px",
                 }}>
                 <p>
-                  Showing Top 10 Results of{" "}
-                  <b>{this.state.results.totalCount}</b> for{" "}
-                  <i>
-                    <b>{this.props.match.params.keyword}</b>
-                  </i>
+                  Showing Top 10 Results of <b>{this.state.results.length}</b>{" "}
+                  for <i></i>
                 </p>
               </Col>
             </Row>
 
-            {this.state.results.value.map((value, key) => (
-              <a className='search-result-anchor' href={value.url}>
+            {this.state.results.map((value, key) => (
+              <a className='search-result-anchor' href={value.link}>
                 <Row>
                   <Col
                     style={{
@@ -115,7 +130,10 @@ export default class ResultPage extends React.Component {
                       className='result-title'
                       dangerouslySetInnerHTML={{ __html: value.title }}
                     />
-                    <p className='text-dec-none result-body'>{value.body}</p>
+                    <p className='text-dec-none result-body'>{value.snippet}</p>
+                    <p className='text-dec-none result-body'>
+                      Date Published: <i>{value.date}</i>
+                    </p>
                   </Col>
                 </Row>
               </a>
