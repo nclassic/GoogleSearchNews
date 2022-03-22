@@ -110,8 +110,8 @@ export default class ResultPage extends React.Component {
                   paddingBottom: 10 + "px",
                 }}>
                 <p>
-                  Showing Top 10 Results of <b>{this.state.results.length}</b>{" "}
-                  for <i></i>
+                  Showing Top 10 Results of <b>{this.state.keyword}</b>
+                  <i></i>
                 </p>
               </Col>
             </Row>
